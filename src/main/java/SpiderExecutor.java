@@ -11,13 +11,15 @@ public class SpiderExecutor {
         Vector<NewsItem>  lastList;
 
         while (!(lastList = s.getNewsList(lastPage)).isEmpty()) {
-            lastList = s.getNewsList(lastPage);
             for (NewsItem  item: lastList) {
                 NewsSpider  newsSpider = new NewsSpider(item.getUrl());
                 NewsPage    page = newsSpider.run();
 
                 System.out.println(page);
-                Thread.sleep(1000);
+                for (Paragraph  p: page.getContent())
+                    System.out.println(p);
+
+                return;
             }
             lastPage++;
         }

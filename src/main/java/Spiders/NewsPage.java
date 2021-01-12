@@ -1,5 +1,7 @@
 package Spiders;
 
+import java.util.Vector;
+
 /*
     Spiders.NewsItem class.
  */
@@ -13,7 +15,7 @@ public class NewsPage {
     // Publishing time
     private String datetime;
     // Main content
-    private String content;
+    private Vector<Paragraph> content;
 
     public NewsPage(String  title, String  url) {
         this.title = title;
@@ -45,11 +47,11 @@ public class NewsPage {
         this.datetime = datetime;
     }
 
-    public String getContent() {
+    public Vector<Paragraph> getContent() {
         return content;
     }
 
-    public void setContent(String content) {
+    public void setContent(Vector<Paragraph> content) {
         this.content = content;
     }
 

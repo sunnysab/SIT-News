@@ -1,7 +1,12 @@
 package Spiders;
 
 
-public class Spider {
+/*
+    Abstract class of Spider
+ */
+public abstract class Spider {
+
+    // SpiderException
     public static class SpiderException extends Exception {
         public SpiderException(String message) {
             super(message);
