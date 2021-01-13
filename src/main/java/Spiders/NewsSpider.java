@@ -12,8 +12,7 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.util.Objects;
 import java.util.Vector;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
 
 public class NewsSpider extends Spider {
     protected String url;
@@ -30,12 +29,6 @@ public class NewsSpider extends Spider {
     public NewsSpider(String  url) {
         this(null, url);
     }
-
-//    // Note: TODO: May throw exception.
-//    protected static String domain(Pattern  pattern, String  url) {
-//        Matcher  r = pattern.matcher(url);
-//        return r.group(1);
-//    }
 
     protected static String  domain() {
         return "www.sit.edu.cn";
