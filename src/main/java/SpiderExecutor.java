@@ -41,10 +41,14 @@ class SpiderInstance {
 
         while (!(lastList = s.getNewsList(lastPage)).isEmpty()) {
             for (NewsItem  item: lastList) {
-                NewsSpider  newsSpider = new NewsSpider(item.getUrl());
-                NewsPage    page = newsSpider.run();
+                try {
+                    NewsSpider newsSpider = new NewsSpider(item.getUrl());
+                    NewsPage page = newsSpider.run();
 
-                saveNewsPage(page);
+                    saveNewsPage(page);
+                } catch (Exception e) {
+                    // Do nothing
+                }
             }
             lastPage++;
         }

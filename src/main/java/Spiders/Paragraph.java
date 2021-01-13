@@ -4,15 +4,16 @@ public class Paragraph {
     enum Type {Text, Img}
 
     Type  type_;
-    private String value;
+    private String text;
+    private String imgPath;
 
     private Paragraph(String  text, String  path) {
         if (text != null) {
             type_ = Type.Text;
-            this.value = text;
+            this.text = text;
         } else if (path != null) {
             type_ = Type.Img;
-            this.value = path;
+            this.imgPath = path;
         }
     }
 
@@ -27,8 +28,8 @@ public class Paragraph {
     @Override
     public String toString() {
         switch (type_) {
-            case Img: return String.format("[Img] %s", value);
-            case Text: return String.format("[Text] %s", value);
+            case Img: return String.format("[Img] %s", imgPath);
+            case Text: return String.format("[Text] %s", text);
             default: return "null";
         }
     }
