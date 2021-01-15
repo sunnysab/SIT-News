@@ -3,11 +3,11 @@ package Spiders;
 public class Paragraph {
     enum Type {Text, Img}
 
-    Type  type_;
-    private String text;
-    private String imgPath;
+    public Type type_;
+    public String text;
+    public String imgPath;
 
-    private Paragraph(String  text, String  path) {
+    private Paragraph(String text, String path) {
         if (text != null) {
             type_ = Type.Text;
             this.text = text;
