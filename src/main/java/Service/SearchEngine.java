@@ -34,7 +34,7 @@ public class SearchEngine {
 
         for (HashMap<String, String> p : paragraphs) {
             if (p.get("type_").equals("Text")) {
-                result.append(p.get("text"));
+                result.append(p.get("text")).append("\n");
                 if (result.length() > maxLength) {
                     return result.substring(0, maxLength);
                 }
@@ -82,7 +82,8 @@ public class SearchEngine {
 
         /* Set query options */
         searchSourceBuilder.query(QueryBuilders.multiMatchQuery(queryStr, fieldNames)
-                .fuzziness(Fuzziness.ZERO));
+                .fuzziness(Fuzziness.ZERO)
+                .field("title", 3)); // Set boost.
         searchSourceBuilder.from(offset);
         searchSourceBuilder.size(count);
 
@@ -101,6 +102,7 @@ public class SearchEngine {
             ResultItem item = new ResultItem();
             Map<String, Object> fields = hit.getSourceAsMap();
 
+            item.docId = hit.getId();
             item.date = fields.get("datetime").toString();
             item.title = fields.get("title").toString();
             item.url = fields.get("url").toString();
@@ -132,7 +134,39 @@ public class SearchEngine {
         return query(title, offset, count, "title");
     }
 
+    public ResultItem get(String doc_id) throws IOException {
+        /* Init */
+        SearchRequest request = new SearchRequest("news");
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+
+        /* Set query options */
+        searchSourceBuilder.query(QueryBuilders.termQuery("_id", doc_id));
+        request.source(searchSourceBuilder);
+
+        SearchResponse searchResponse = esClient.search(request, RequestOptions.DEFAULT);
+
+        /* Retrieve search result */
+        ResultItem item = new ResultItem();
+
+        try {
+            SearchHit hit = searchResponse.getHits().getAt(0);
+            Map<String, Object> fields = hit.getSourceAsMap();
+
+            item.date = fields.get("datetime").toString();
+            item.title = fields.get("title").toString();
+            item.url = fields.get("url").toString();
+            item.author = fields.get("author").toString();
+
+            ArrayList<HashMap<String, String>> content = (ArrayList<HashMap<String, String>>) fields.get("content");
+            item.description = joinDescription(content).replace("\n", "<br>");
+        } catch (Exception e) {
+            // Do nothing
+        }
+        return item;
+    }
+
     public static class ResultItem {
+        public String docId;
         public String title;
         public String url;
         public String author;

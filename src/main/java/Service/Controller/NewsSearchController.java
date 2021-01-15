@@ -20,8 +20,11 @@ public class NewsSearchController {
     }
 
     @GetMapping("/{id}")
-    public String get(@PathVariable String id) {
-        return id;
+    public SearchEngine.ResultItem get(@PathVariable String id) throws IOException {
+        RestHighLevelClient client = EsClient.getClient();
+        SearchEngine engine = new SearchEngine(client);
+
+        return engine.get(id);
     }
 
     @GetMapping("/")
