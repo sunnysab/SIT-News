@@ -3,7 +3,6 @@ package Service.Controller;
 import Service.EsClient;
 import Service.SearchEngine;
 import org.elasticsearch.client.RestHighLevelClient;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -26,13 +25,25 @@ public class NewsSearchController {
     }
 
     @GetMapping("/")
-    public SearchEngine.QueryResults query(@NotNull @RequestParam String q, @RequestParam int page,
-                                           @RequestParam int count) throws IOException {
-        int _page = page < 0 ? 0 : page;
-        int _count = count < 1 ? 20 : count;
+    public SearchEngine.QueryResults query(@RequestParam String q,
+                                           @RequestParam(required = false) String sort,
+                                           @RequestParam(required = false) Integer page,
+                                           @RequestParam(required = false) Integer count) throws IOException {
+        Integer _page = page == null ? 0 : page < 0 ? 0 : page;
+        Integer _count = count == null ? 10 : count < 1 ? 10 : count;
+        int offset = _page * _count;
+
         RestHighLevelClient client = EsClient.getClient();
         SearchEngine engine = new SearchEngine(client);
 
-        return engine.queryNormally(q, _page * _count, _count);
+        if (sort == null) {
+            return engine.queryNormally(q, offset, _count);
+        } else if (sort.equals("author")) {
+            return engine.queryByAuthor(q, offset, _count);
+        } else if (sort.equals("title")) {
+            return engine.queryByTitle(q, offset, _count);
+        } else {
+            return engine.queryNormally(q, offset, _count);
+        }
     }
 }

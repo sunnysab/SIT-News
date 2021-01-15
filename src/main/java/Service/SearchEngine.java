@@ -75,26 +75,16 @@ public class SearchEngine {
         return new SuggestWord(result);
     }
 
-    public QueryResults queryNormally(String queryStr, int offset, int count) throws IOException {
+    public QueryResults query(String queryStr, int offset, int count, String... fieldNames) throws IOException {
         /* Init */
         SearchRequest request = new SearchRequest("news");
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 
         /* Set query options */
-        searchSourceBuilder.query(QueryBuilders.multiMatchQuery(queryStr, "title", "content")
+        searchSourceBuilder.query(QueryBuilders.multiMatchQuery(queryStr, fieldNames)
                 .fuzziness(Fuzziness.ZERO));
         searchSourceBuilder.from(offset);
         searchSourceBuilder.size(count);
-
-        /* Set highlight */
-//        HighlightBuilder highlightBuilder = new HighlightBuilder();
-//        HighlightBuilder.Field highlightTitle =
-//                new HighlightBuilder.Field("title");
-//        highlightTitle.highlighterType("unified");
-//        highlightBuilder.field(highlightTitle);
-//        HighlightBuilder.Field highlightContent = new HighlightBuilder.Field("content");
-//        highlightBuilder.field(highlightContent);
-//        searchSourceBuilder.highlighter(highlightBuilder);
 
         /* Set fetching fields. */
         String[] includeFields = new String[]{"title", "datetime", "author", "content", "url"};
@@ -102,8 +92,6 @@ public class SearchEngine {
 
         request.source(searchSourceBuilder);
         SearchResponse searchResponse = esClient.search(request, RequestOptions.DEFAULT);
-
-        System.out.println(searchResponse.toString());
 
         /* Retrieve search results */
         SearchHits hits = searchResponse.getHits();
@@ -132,8 +120,16 @@ public class SearchEngine {
         return queryResults;
     }
 
-    public QueryResults queryByAuthor(String author, int offset, int count) {
-        return new QueryResults();
+    public QueryResults queryNormally(String queryStr, int offset, int count) throws IOException {
+        return query(queryStr, offset, count, "title", "author", "content");
+    }
+
+    public QueryResults queryByAuthor(String author, int offset, int count) throws IOException {
+        return query(author, offset, count, "author");
+    }
+
+    public QueryResults queryByTitle(String title, int offset, int count) throws IOException {
+        return query(title, offset, count, "title");
     }
 
     public static class ResultItem {
