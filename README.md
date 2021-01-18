@@ -75,8 +75,10 @@
 ```json
 {
 	"costTime": 0.005,
-	"hits": 3,
-	"results": [{
+  "hits": 3,
+  "total": 242,
+  "results": [
+    {
 		"docId": "99462643-1ba3-4cea-bb1d-2024fe211318",
 		"title": "【媒体关注】科学系统推进劳动教育",
 		"url": "https://www.sit.edu.cn/_t470/2020/0514/c12988a185089/page.htm",

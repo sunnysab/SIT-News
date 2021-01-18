@@ -96,6 +96,7 @@ public class SearchEngine {
 
         /* Retrieve search results */
         SearchHits hits = searchResponse.getHits();
+
         ArrayList<ResultItem> results = new ArrayList<>();
         for (SearchHit hit : hits.getHits()) {
 
@@ -117,6 +118,7 @@ public class SearchEngine {
         QueryResults queryResults = new QueryResults();
         queryResults.costTime = searchResponse.getTook().secondsFrac();
         queryResults.hits = results.size();
+        queryResults.total = (int) hits.getTotalHits().value;
         queryResults.results = results;
 
         return queryResults;
@@ -178,6 +180,7 @@ public class SearchEngine {
     public static class QueryResults {
         public double costTime;
         public int hits;
+        public int total;
         public ArrayList<ResultItem> results;
     }
 
