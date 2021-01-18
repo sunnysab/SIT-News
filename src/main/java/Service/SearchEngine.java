@@ -152,6 +152,7 @@ public class SearchEngine {
             SearchHit hit = searchResponse.getHits().getAt(0);
             Map<String, Object> fields = hit.getSourceAsMap();
 
+            item.docId = hit.getId();
             item.date = fields.get("datetime").toString();
             item.title = fields.get("title").toString();
             item.url = fields.get("url").toString();
