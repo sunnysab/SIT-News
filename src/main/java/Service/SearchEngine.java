@@ -9,6 +9,7 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.search.sort.SortOrder;
 import org.elasticsearch.search.suggest.Suggest;
 import org.elasticsearch.search.suggest.SuggestBuilder;
 import org.elasticsearch.search.suggest.SuggestBuilders;
@@ -176,6 +177,46 @@ public class SearchEngine {
         return item;
     }
 
+    public RecentResults get_recent_item() throws IOException {
+        /* Init */
+        SearchRequest request = new SearchRequest("news");
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+
+        /* Set query options */
+        searchSourceBuilder.sort("datetime", SortOrder.DESC);
+        searchSourceBuilder.size(10);
+
+        /* Set fetching fields. */
+        String[] includeFields = new String[]{"title", "url"};
+        searchSourceBuilder.fetchSource(includeFields, new String[]{});
+
+        request.source(searchSourceBuilder);
+        SearchResponse searchResponse = esClient.search(request, RequestOptions.DEFAULT);
+
+        /* Retrieve search results */
+        SearchHits hits = searchResponse.getHits();
+
+        ArrayList<RecentItem> results = new ArrayList<>();
+        for (SearchHit hit : hits.getHits()) {
+
+            RecentItem item = new RecentItem();
+            Map<String, Object> fields = hit.getSourceAsMap();
+
+            item.docId = hit.getId();
+            item.title = fields.get("title").toString();
+            item.url = fields.get("url").toString();
+            results.add(item);
+        }
+
+        /* Construct query results */
+        RecentResults recentResults = new RecentResults();
+        recentResults.costTime = searchResponse.getTook().secondsFrac();
+        recentResults.count = results.size();
+        recentResults.recentItems = results;
+
+        return recentResults;
+    }
+
     public static class ResultItem {
         public String docId;
         public String title;
@@ -190,6 +231,18 @@ public class SearchEngine {
         public int hits;
         public int total;
         public ArrayList<ResultItem> results;
+    }
+
+    public static class RecentItem {
+        public String docId;
+        public String title;
+        public String url;
+    }
+
+    public static class RecentResults {
+        public double costTime;
+        public int count;
+        public ArrayList<RecentItem> recentItems;
     }
 
     public static class SuggestWord {

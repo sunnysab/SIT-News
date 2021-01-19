@@ -20,6 +20,14 @@ public class NewsSearchController {
         return engine.suggest(q);
     }
 
+    @GetMapping("/recent")
+    public SearchEngine.RecentResults get_recent() throws IOException {
+        RestHighLevelClient client = EsClient.getClient();
+        SearchEngine engine = new SearchEngine(client);
+
+        return engine.get_recent_item();
+    }
+
     @GetMapping("/{id}")
     public SearchEngine.ResultItem get(@PathVariable String id) throws IOException {
         RestHighLevelClient client = EsClient.getClient();
