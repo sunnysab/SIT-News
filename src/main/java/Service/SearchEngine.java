@@ -139,6 +139,53 @@ public class SearchEngine {
         return query(title, offset, count, "title");
     }
 
+    public QueryResults queryByContent(String content, int offset, int count) throws IOException {
+        return query(content, offset, count, "content");
+    }
+
+    public RecentResults find_the_day_in_history(String date) throws IOException {
+        /* Init */
+        SearchRequest request = new SearchRequest("news2");
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+
+        /* Set query options */
+        searchSourceBuilder.query(QueryBuilders.matchQuery("datetime", date));
+        searchSourceBuilder.size(5);
+
+        /* Set fetching fields. */
+        String[] includeFields = new String[]{"title", "url", "datetime"};
+        searchSourceBuilder.fetchSource(includeFields, new String[]{});
+
+        request.source(searchSourceBuilder);
+        SearchResponse searchResponse = esClient.search(request, RequestOptions.DEFAULT);
+
+        /* Retrieve search results */
+        SearchHits hits = searchResponse.getHits();
+
+        ArrayList<RecentItem> results = new ArrayList<>();
+        for (SearchHit hit : hits.getHits()) {
+
+            RecentItem item = new RecentItem();
+            Map<String, Object> fields = hit.getSourceAsMap();
+
+            item.docId = hit.getId();
+            item.title = fields.get("title").toString();
+            if (fields.get("datetime") != null)
+                item.date = fields.get("datetime").toString();
+            item.url = fields.get("url").toString();
+            results.add(item);
+        }
+
+        /* Construct query results */
+        RecentResults recentResults = new RecentResults();
+        recentResults.costTime = searchResponse.getTook().secondsFrac();
+        recentResults.count = results.size();
+        recentResults.recentItems = results;
+
+        return recentResults;
+    }
+
+
     public ResultItem get(String doc_id) throws IOException {
         /* Init */
         SearchRequest request = new SearchRequest("news");
@@ -204,6 +251,8 @@ public class SearchEngine {
 
             item.docId = hit.getId();
             item.title = fields.get("title").toString();
+            if (fields.get("datetime") != null)
+                item.date = fields.get("datetime").toString();
             item.url = fields.get("url").toString();
             results.add(item);
         }
@@ -235,6 +284,7 @@ public class SearchEngine {
 
     public static class RecentItem {
         public String docId;
+        public String date;
         public String title;
         public String url;
     }

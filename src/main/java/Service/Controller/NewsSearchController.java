@@ -6,6 +6,8 @@ import org.elasticsearch.client.RestHighLevelClient;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -26,6 +28,16 @@ public class NewsSearchController {
         SearchEngine engine = new SearchEngine(client);
 
         return engine.get_recent_item();
+    }
+
+    @GetMapping("/today_in_history")
+    public SearchEngine.RecentResults get_today_in_history() throws IOException {
+        RestHighLevelClient client = EsClient.getClient();
+        SearchEngine engine = new SearchEngine(client);
+
+        Date todayDate = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("MM-dd");
+        return engine.find_the_day_in_history(formatter.format(todayDate));
     }
 
     @GetMapping("/{id}")
@@ -54,6 +66,8 @@ public class NewsSearchController {
             return engine.queryByAuthor(q, offset, _count);
         } else if (sort.equals("title")) {
             return engine.queryByTitle(q, offset, _count);
+        } else if (sort.equals("content")) {
+            return engine.queryByContent(q, offset, _count);
         } else {
             return engine.queryNormally(q, offset, _count);
         }

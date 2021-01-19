@@ -179,6 +179,61 @@
 }
 ```
 
+## GET /news/today_in_history
+
+获取那年今日的新闻
+
+### 参数
+
+无
+
+### 示例
+
+请求地址
+
+`http://localhost:8080/news/today_in_history`
+
+响应
+
+```json
+{
+  "costTime": 0.004,
+  "count": 5,
+  "recentItems": [
+    {
+      "docId": "8a5c6173-221f-4070-9fd4-a8896463af75",
+      "date": "2020-01-19",
+      "title": "校领导走访慰问共建部队",
+      "url": "https://www.sit.edu.cn/_t470/2020/0119/c12988a183416/page.htm"
+    },
+    {
+      "docId": "13a61464-3884-455b-b28a-7ac2c495a66f",
+      "date": "2020-01-19",
+      "title": "【媒体关注】苹果教授”传递爱的教育——记市“三八红旗手”、上海应用技术大学马克思主义学院院长李国娟",
+      "url": "https://www.sit.edu.cn/_t470/2020/0119/c12988a183412/page.htm"
+    },
+    {
+      "docId": "dbec3fbb-d6b2-4966-a25f-e497d9502260",
+      "date": "2019-01-19",
+      "title": "学校召开2019年基金申报工作推进会",
+      "url": "https://www.sit.edu.cn/_t470/2019/0116/c12988a172975/page.htm"
+    },
+    {
+      "docId": "b9d5e990-ab3d-4f04-b44f-a1e97bfb2a65",
+      "date": "2018-01-19",
+      "title": "学校召开课程思政教学改革推进会",
+      "url": "https://www.sit.edu.cn/_t470/2018/0119/c12988a152714/page.htm"
+    },
+    {
+      "docId": "1ef1c52e-ddb2-424c-a3e1-c58b3f5a4979",
+      "date": "2018-01-19",
+      "title": "陆靖带队检查实验室安全工作",
+      "url": "https://www.sit.edu.cn/_t470/2018/0119/c12988a152713/page.htm"
+    }
+  ]
+}
+```
+
 ## 开源协议
 
 版权所有 (C) 2021 sunnysab
