@@ -10,17 +10,11 @@ import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.sort.SortOrder;
-import org.elasticsearch.search.suggest.Suggest;
-import org.elasticsearch.search.suggest.SuggestBuilder;
-import org.elasticsearch.search.suggest.SuggestBuilders;
-import org.elasticsearch.search.suggest.SuggestionBuilder;
-import org.elasticsearch.search.suggest.term.TermSuggestion;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -51,33 +45,6 @@ public class SearchEngine {
     }
 
     /* Function*/
-    public SuggestWord suggest(String queryStr) throws IOException {
-        SearchRequest request = new SearchRequest("news");
-        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-        SuggestBuilder suggestBuilder = new SuggestBuilder();
-
-        /* Set suggestion fields. */
-        SuggestionBuilder titleSuggester = SuggestBuilders.termSuggestion("title").text(queryStr);
-        suggestBuilder.addSuggestion("suggestTitle", titleSuggester);
-        searchSourceBuilder.suggest(suggestBuilder);
-
-        /* Get response */
-        SearchResponse searchResponse = esClient.search(request, RequestOptions.DEFAULT);
-        // System.out.println(searchResponse.toString());
-        Suggest suggest = searchResponse.getSuggest();
-        TermSuggestion termSuggestion = suggest.getSuggestion("suggestTitle");
-
-        /* Convert response. */
-        Vector<String> result = new Vector<>();
-        for (TermSuggestion.Entry entry : termSuggestion.getEntries()) {
-            for (TermSuggestion.Entry.Option option : entry) {
-                String suggestText = option.getText().string();
-                result.add(suggestText);
-            }
-        }
-        return new SuggestWord(result);
-    }
-
     public QueryResults query(String queryStr, int offset, int count, String... fieldNames) throws IOException {
         /* Init */
         SearchRequest request = new SearchRequest("news");
@@ -293,15 +260,5 @@ public class SearchEngine {
         public double costTime;
         public int count;
         public ArrayList<RecentItem> recentItems;
-    }
-
-    public static class SuggestWord {
-        public int count;
-        public Vector<String> keywords;
-
-        public SuggestWord(Vector<String> keywords) {
-            this.keywords = keywords;
-            this.count = keywords.size();
-        }
     }
 }

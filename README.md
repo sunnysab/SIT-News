@@ -24,7 +24,8 @@
 
 - GET /news/{docId} 查看网页缓存
 - GET /news/ 新闻搜索
-- GET /news/suggestion/ （未完全实现）
+- GET /news/recent
+- GET /news/today_in_history
 
 ### GET /news/{**docId**}
 

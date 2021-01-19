@@ -13,15 +13,6 @@ import java.util.Date;
 @CrossOrigin(origins = "*")
 @RequestMapping("/news")
 public class NewsSearchController {
-
-    @GetMapping("/suggestion")
-    public SearchEngine.SuggestWord suggest(@RequestParam String q) throws IOException {
-        RestHighLevelClient client = EsClient.getClient();
-        SearchEngine engine = new SearchEngine(client);
-
-        return engine.suggest(q);
-    }
-
     @GetMapping("/recent")
     public SearchEngine.RecentResults get_recent() throws IOException {
         RestHighLevelClient client = EsClient.getClient();
