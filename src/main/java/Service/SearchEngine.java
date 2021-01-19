@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class SearchEngine {
     private RestHighLevelClient esClient;
@@ -161,7 +163,13 @@ public class SearchEngine {
             item.author = fields.get("author").toString();
 
             ArrayList<HashMap<String, String>> content = (ArrayList<HashMap<String, String>>) fields.get("content");
-            item.description = joinDescription(content).replace("\n", "<br>");
+            item.description = joinDescription(content);
+
+            /* More operation */
+            Pattern spaces = Pattern.compile("[\s(\\r\\n|\\r|\\n|\\n\\r)　]{2,10}");
+            Matcher m = spaces.matcher(item.description);
+            item.description = m.replaceAll("\n\t");
+
         } catch (Exception e) {
             // Do nothing
         }
