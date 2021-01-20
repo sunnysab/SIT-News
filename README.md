@@ -8,7 +8,6 @@
 
 - Windows 10 x86_64
 - JDK 15
-- Java bytecode 1.8
 
 主要依赖库的参数如下：
 
